@@ -14,36 +14,35 @@ var inject = require('connect-inject');
 var serveIndex = require('serve-index');
 var serveStatic = require('serve-static');
 var through = require('through2');
-var gutil = require('gulp-util');
 
 var utils = require('./utils');
 var iProxy = require('./iproxy');
 
-var openURL = function (url) {
-  switch (process.platform) {
-    case "darwin":
-      exec('open ' + url);
-      break;
-    case "win32":
-      exec('start ' + url);
-      break;
-    default:
-      spawn('xdg-open', [url]);
-  }
+var openURL = function(url) {
+    switch (process.platform) {
+        case 'darwin':
+            exec('open ' + url);
+            break;
+        case 'win32':
+            exec('start ' + url);
+            break;
+        default:
+            spawn('xdg-open', [url]);
+    }
 };
 
-var getIPAddress = function () {
-  var ifaces = os.networkInterfaces();
-  var ip = '';
-  for (var dev in ifaces) {
-    ifaces[dev].forEach(function (details) {
-      if (ip === '' && details.family === 'IPv4' && !details.internal) {
-        ip = details.address;
-        return;
-      }
-    });
-  }
-  return ip || '127.0.0.1';
+var getIPAddress = function() {
+    var ifaces = os.networkInterfaces();
+    var ip = '';
+    for (var dev in ifaces) {
+        ifaces[dev].forEach(function(details) {
+            if (ip === '' && details.family === 'IPv4' && !details.internal) {
+                ip = details.address;
+                return;
+            }
+        });
+    }
+    return ip || '127.0.0.1';
 };
 
 var BROWSER_SCIPTS_DIR = path.join(__dirname, 'lib');
@@ -60,7 +59,7 @@ var defaults = {
         filter: function(filename, cb) {
             cb(!(/node_modules/.test(filename)));
         },
-        clientConsole: false,
+        clientConsole: true,
     },
     listdir: true,
     proxy: {
@@ -75,7 +74,7 @@ var defaults = {
     }
 };
 
-module.exports = function (options) {
+module.exports = function(options) {
     var config = utils.extend({}, defaults, options);
     config.host = config.host || getIPAddress();
     // 自动打开浏览器
@@ -88,7 +87,7 @@ module.exports = function (options) {
     };
 
     var app = connect();
-    app.use(function (req, res, next) {
+    app.use(function(req, res, next) {
         res.setHeader('Access-Control-Allow-Origin', '*');
         next();
     });
@@ -97,8 +96,8 @@ module.exports = function (options) {
     var webserver = null;
     if (config.https) {
         var options = {
-            key: fs.readFileSync(config.https.key || __dirname + '/certs/dev-key.pem'),
-            cert: fs.readFileSync(config.https.cert || __dirname + '/certs/dev-cert.pem')
+            key: fs.readFileSync(config.https.key || __dirname + '/certs/server.key'),
+            cert: fs.readFileSync(config.https.cert || __dirname + '/certs/server.cert')
         };
         webserver = https.createServer(options, app);
     } else {
@@ -125,56 +124,39 @@ module.exports = function (options) {
         }));
         // 创建script服务器
         var ioApp = connect();
-        ioApp.use(serveStatic(BROWSER_SCIPTS_DIR, { index: false }));
+        ioApp.use(serveStatic(BROWSER_SCIPTS_DIR, {
+            index: false
+        }));
         var ioServer = config.livereload.ioServer = http.createServer(ioApp).listen(config.livereload.port, config.host);
         // 启动socket服务
         var io = config.livereload.io = socket(ioServer);
         io.on('connection', function(socket) {
-            gutil.log('Livereload client connected');
-            socket.on('console_log', function(data) {
-                var args = [
-                    gutil.colors.green('log')
-                ];
-                for (var i in data) {
-                    args.push(data[i]);
-                }
-                gutil.log.apply(null, args);
+            utils.log('Livereload client connected');
+            socket.on('console_log', function(args) {
+                args.unshift(utils.colors.green('log'));
+                utils.log.apply(null, args);
             });
-            socket.on('console_warn', function(data) {
-                var args = [
-                    gutil.colors.yellow('warn')
-                ];
-                for (var i in data) {
-                    args.push(data[i]);
-                }
-                gutil.log.apply(null, args);
+            socket.on('console_warn', function(args) {
+                args.unshift(utils.colors.yellow('warn'));
+                utils.log.apply(null, args);
             });
-            socket.on('console_info', function(data) {
-                var args = [
-                    gutil.colors.cyan('info')
-                ];
-                for (var i in data) {
-                    args.push(data[i]);
-                }
-                gutil.log.apply(null, args);
+            socket.on('console_info', function(args) {
+                args.unshift(utils.colors.cyan('info'));
+                utils.log.apply(null, args);
             });
-            socket.on('console_error', function(data) {
-                var args = [
-                    gutil.colors.red('err')
-                ];
-                for (var i in data) {
-                    args.push(data[i]);
-                }
-                gutil.log.apply(null, args);
+            socket.on('console_error', function(args) {
+                args.unshift(utils.colors.red('err'));
+                utils.log.apply(null, args);
             });
         });
     }
 
     // gulp入口
     return through.obj(function(file, enc, callback) {
+        config.path = file.path;
         if ('debug' === config.log) {
             app.use(function(req, res, next) {
-                gutil.log(req.method + ' ' + req.url);
+                utils.log(req.method + ' ' + req.url);
                 next();
             });
         }
@@ -184,24 +166,24 @@ module.exports = function (options) {
         }
 
         // 静态文件服务器
-        app.use(serveStatic(file.path, {
+        app.use(serveStatic(config.path, {
             index: (config.listdir ? false : config.defaultFile)
         }));
 
         // 列出目录文件列表
         if (config.listdir) {
-            app.use(serveIndex(path.resolve(file.path), {icons: true}));
+            app.use(serveIndex(path.resolve(config.path), {
+                icons: true
+            }));
         }
 
         // 监听文件变化，reload
         if (config.livereload.enable) {
-            watch(file.path, function(filename) {
+            watch(config.path, function(filename) {
                 config.livereload.filter(filename, function(shouldReload) {
                     if (shouldReload) {
-                        gutil.log('changed: ' + filename);
-
+                        utils.log('changed: ' + utils.colors.yellow(path.relative(config.path, filename)));
                         config.livereload.io.sockets.emit('reload');
-
                         config.livereload.io.sockets.emit('file_changed', {
                             path: filename,
                             name: path.basename(filename),
@@ -214,11 +196,11 @@ module.exports = function (options) {
 
         this.push(file);
 
-            callback();
+        callback();
     }).on('data', function() {
         // start the web server
         webserver.listen(config.port, config.host, openInBrowser);
-        gutil.log('Webserver started at', gutil.colors.cyan('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port));
+        utils.log('Webserver started at', utils.colors.cyan('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port));
     }).on('kill', function() {
         webserver.close();
         if (config.livereload.enable) {
