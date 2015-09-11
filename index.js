@@ -108,11 +108,11 @@ module.exports = function(options) {
     if (config.livereload.enable) {
         // 插入livereload相关script至body
         var ioServerOrigin = 'http://' + config.host + ':' + config.livereload.port;
-        var snippetParams = [];
+        var snippet = '';
         if (config.livereload.clientConsole) {
-            snippetParams.push('extra=capture-console');
+            snippet += fs.readFileSync(BROWSER_SCIPTS_DIR + '/console.js');
         }
-        var snippet = '<script async defer src="' + ioServerOrigin + '/livereload.js?' + snippetParams.join('&') + '"></script>';
+        snippet += '<script async defer src="' + ioServerOrigin + '/livereload.js"></script>';
         app.use(inject({
             snippet: snippet,
             rules: [{
