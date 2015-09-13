@@ -22,7 +22,7 @@ function iProxy(opt) {
         var m = isMock(req.url);
         if (m) {
             res.end(Mock.mock(m));
-        } else if (isProxy(req.url)) {
+        } else if (isProxy(req.url) && opt.host) {
             req.headers['Host'] = opt.host.replace(/^https?:\/\//, '');
             request({
                 method: req.method,

@@ -17,9 +17,9 @@ exports.isArray = function(value) {
     return Array.isArray(value);
 };
 
-exports.extend = function() {
+function extend() {
     var i = 1;
-    var target = arguments[0];
+    var target = arguments[0] || {};
     var len = arguments.length;
     var obj, keys, j;
     for (; i < len; i++) {
@@ -28,12 +28,18 @@ exports.extend = function() {
             keys = Object.keys(obj);
             j = keys.length;
             while (j--) {
-                target[keys[j]] = obj[keys[j]];
+                if (isObject(obj[keys[j]])) {
+                    target[keys[j]] = extend(target[keys[j]], obj[keys[j]]);
+                } else {
+                   target[keys[j]] = obj[keys[j]]; 
+                } 
             }
         }
     }
     return target;
 };
+
+exports.extend = extend;
 
 var logPrefix = function() {
     var now = new Date();

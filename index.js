@@ -53,7 +53,7 @@ var defaults = {
     defaultFile: 'index.html',
     https: false,
     open: true,
-    log: 'info',
+    debug: false,
     livereload: {
         enable: true,
         port: 35729,
@@ -65,13 +65,9 @@ var defaults = {
     listdir: true,
     proxy: {
         enable: false,
-        host: 'http://w3cboy.com',
-        urls: /^\/api\//,
-        mock: {
-            '/api/': {
-
-            }
-        }
+        host: '',
+        urls: '',
+        mock: {}
     }
 };
 
@@ -167,7 +163,7 @@ module.exports = function(options) {
     // gulp入口
     return through.obj(function(file, enc, callback) {
         config.path = file.path;
-        if ('debug' === config.log) {
+        if (config.debug) {
             app.use(function(req, res, next) {
                 utils.log(req.method + ' ' + req.url);
                 next();
