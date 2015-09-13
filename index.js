@@ -108,21 +108,31 @@ module.exports = function(options) {
     // livereload服务相关
     if (config.livereload.enable) {
         // 插入livereload相关script至body
+        var injectRules = [];
         var preLoad = config.livereload.clientConsole ? '' : ' async defer';
         var ioServerOrigin = 'http://' + config.host + ':' + config.livereload.port;
         var snippet = '<script id="__ds_socket__" src="' + ioServerOrigin + '/socket.io/socket.io.js"></script>';
         snippet += '<script' + preLoad + ' src="' + ioServerOrigin + '/__ds_livereload.js"></script>';
         if (config.livereload.clientConsole) {
             snippet += '<script src="' + ioServerOrigin + '/__ds_console.js"></script>';
-        }
-        app.use(inject({
-            snippet: snippet,
-            rules: [{
-                match: /<body[^>]*>/i,
-                fn: function(match, snippet) {
-                    return match + snippet;
+            injectRules.push({
+                snippet: ' crossorigin="anonymous"',
+                match: /<script\s+\S*src="\S+"/gi,
+                fn: function (m, s) {
+                    return m + s;
                 }
-            }]
+            });
+        }
+        injectRules.push({
+            snippet: snippet,
+            match: /<body[^>]*>/i,
+            fn: function (m, s) {
+                return m + s;
+            }
+        });
+        app.use(inject({
+            runAll: true,
+            rules: injectRules
         }));
         // 创建script服务器
         var ioApp = connect();
@@ -154,7 +164,6 @@ module.exports = function(options) {
             }
         });
     }
-
     // gulp入口
     return through.obj(function(file, enc, callback) {
         config.path = file.path;
@@ -171,7 +180,8 @@ module.exports = function(options) {
 
         // 静态文件服务器
         app.use(serveStatic(config.path, {
-            index: (config.listdir ? false : config.defaultFile)
+            index: config.listdir ? false : config.defaultFile,
+            lastModified: false
         }));
 
         // 列出目录文件列表
