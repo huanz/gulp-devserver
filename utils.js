@@ -33,15 +33,15 @@ exports.extend = function() {
         }
     }
     return target;
-}
-
-var logPrefix = function () {
-    var now = new Date();
-    var str = now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
-    return '[' + chalk.grey(str) + ']';
 };
 
-exports.log = function () {
+var logPrefix = function() {
+    var now = new Date();
+    var str = now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
+    return '[' + chalk.cyan(str) + ']';
+};
+
+exports.log = function() {
     process.stdout.write(logPrefix() + ' ');
     console.log.apply(console, arguments);
     return this;

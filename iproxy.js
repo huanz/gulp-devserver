@@ -1,4 +1,5 @@
 'use strict';
+
 var url = require('url');
 var request = require('request');
 var Mock = require('mockjs');

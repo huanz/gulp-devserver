@@ -1,4 +1,5 @@
 'use strict';
+
 var os = require('os');
 var http = require('http');
 var https = require('https');
@@ -59,12 +60,12 @@ var defaults = {
         filter: function(filename, cb) {
             cb(!(/node_modules/.test(filename)));
         },
-        clientConsole: true,
+        clientConsole: false,
     },
     listdir: true,
     proxy: {
-        enable: true,
-        host: 'https://cnodejs.org',
+        enable: false,
+        host: 'http://w3cboy.com',
         urls: /^\/api\//,
         mock: {
             '/api/': {
@@ -107,18 +108,19 @@ module.exports = function(options) {
     // livereload服务相关
     if (config.livereload.enable) {
         // 插入livereload相关script至body
+        var preLoad = config.livereload.clientConsole ? '' : ' async defer';
         var ioServerOrigin = 'http://' + config.host + ':' + config.livereload.port;
-        var snippet = '';
+        var snippet = '<script id="__ds_socket__" src="' + ioServerOrigin + '/socket.io/socket.io.js"></script>';
+        snippet += '<script' + preLoad + ' src="' + ioServerOrigin + '/__ds_livereload.js"></script>';
         if (config.livereload.clientConsole) {
-            snippet += fs.readFileSync(BROWSER_SCIPTS_DIR + '/console.js');
+            snippet += '<script src="' + ioServerOrigin + '/__ds_console.js"></script>';
         }
-        snippet += '<script async defer src="' + ioServerOrigin + '/livereload.js"></script>';
         app.use(inject({
             snippet: snippet,
             rules: [{
-                match: /<\/body>/,
-                fn: function(w, s) {
-                    return s + w;
+                match: /<body[^>]*>/i,
+                fn: function(match, snippet) {
+                    return match + snippet;
                 }
             }]
         }));
@@ -132,22 +134,24 @@ module.exports = function(options) {
         var io = config.livereload.io = socket(ioServer);
         io.on('connection', function(socket) {
             utils.log('Livereload client connected');
-            socket.on('console_log', function(args) {
-                args.unshift(utils.colors.green('log'));
-                utils.log.apply(null, args);
-            });
-            socket.on('console_warn', function(args) {
-                args.unshift(utils.colors.yellow('warn'));
-                utils.log.apply(null, args);
-            });
-            socket.on('console_info', function(args) {
-                args.unshift(utils.colors.cyan('info'));
-                utils.log.apply(null, args);
-            });
-            socket.on('console_error', function(args) {
-                args.unshift(utils.colors.red('err'));
-                utils.log.apply(null, args);
-            });
+            if (config.livereload.clientConsole) {
+                socket.on('console:log', function(args) {
+                    args.unshift(utils.colors.green('log'));
+                    utils.log.apply(null, args);
+                });
+                socket.on('console:warn', function(args) {
+                    args.unshift(utils.colors.yellow('warn'));
+                    utils.log.apply(null, args);
+                });
+                socket.on('console:info', function(args) {
+                    args.unshift(utils.colors.cyan('info'));
+                    utils.log.apply(null, args);
+                });
+                socket.on('console:error', function(args) {
+                    args.unshift(utils.colors.red('err'));
+                    utils.log.apply(null, args);
+                });
+            }
         });
     }
 
@@ -183,11 +187,10 @@ module.exports = function(options) {
                 config.livereload.filter(filename, function(shouldReload) {
                     if (shouldReload) {
                         utils.log('changed: ' + utils.colors.yellow(path.relative(config.path, filename)));
-                        config.livereload.io.sockets.emit('reload');
-                        config.livereload.io.sockets.emit('file_changed', {
+                        config.livereload.io.emit('file:change', {
                             path: filename,
                             name: path.basename(filename),
-                            ext: path.extname(filename),
+                            ext: path.extname(filename).replace(/^\./, ''),
                         });
                     }
                 });
