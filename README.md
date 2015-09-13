@@ -1,4 +1,4 @@
-# gulp-devServer
+# gulp-devserver
 
 一个本地调试`gulp`插件，具备如下功能：
 
@@ -12,18 +12,18 @@
 
 作为`gulp`插件使用：
 
-	$ npm install --save-dev gulp-devServer
+	$ npm install --save-dev gulp-devserver
 	
 单独使用：
 
-	$ npm install gulp-devServer -g
+	$ npm install gulp-devserver -g
 	
 # Usage
 
 作为`gulp`插件使用：
 
 	var gulp = require('gulp');
-	var server = require('gulp-devServer');
+	var server = require('gulp-devserver');
 	
 	gulp.task('devserver', function () {
 	  gulp.src('./app')

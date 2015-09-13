@@ -1,5 +1,5 @@
 {
-    "name": "gulp-devServer",
+    "name": "gulp-devserver",
     "description": "Gulp plugin to run a local webserver with LiveReload and debug for ajax cross domain",
     "version": "0.5.1",
     "main": "index.js",
@@ -11,10 +11,10 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/huanz/gulp-devServer.git"
+        "url": "https://github.com/huanz/gulp-devserver.git"
     },
     "bugs": {
-        "url": "https://github.com/huanz/gulp-devServer/issues"
+        "url": "https://github.com/huanz/gulp-devserver/issues"
     },
     "keywords": [
         "gulpplugin",
