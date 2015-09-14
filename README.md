@@ -1,4 +1,4 @@
-# gulp-devserver
+# gulp-devserver [![stars](https://img.shields.io/github/stars/huanz/gulp-devserver.svg?style=flat-square)](https://github.com/huanz/gulp-devserver/stargazers) [![npm package](https://img.shields.io/npm/v/gulp-devserver.svg?style=flat-square)](https://www.npmjs.com/package/gulp-devserver)
 
 一个本地调试`gulp`插件，具备如下功能：
 

@@ -1,7 +1,7 @@
 {
     "name": "gulp-devserver",
     "description": "Gulp plugin to run a local webserver with LiveReload and debug for ajax cross domain",
-    "version": "0.5.3",
+    "version": "0.5.4",
     "main": "index.js",
     "bin": {
         "devs": "./bin/devs.js"
@@ -30,9 +30,9 @@
         "name": "bukas (https://github.com/huanz)"
     },
     "engines": {
-        "node": ">= 0.8.0"
+        "node": ">= 0.10.0"
     },
-    "homepage": "https://github.com/huanz/gulp-devServer",
+    "homepage": "https://github.com/huanz/gulp-devserver",
     "license": "MIT",
     "dependencies": {
         "chalk": "^1.1.1",
