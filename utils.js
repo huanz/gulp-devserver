@@ -2,12 +2,11 @@
 
 var chalk = require('chalk');
 
+// 此处不包含function
 function isObject(value) {
     var type = typeof value;
-    return !!value && (type == 'object' || type == 'function');
+    return !!value && type === 'object';
 };
-
-exports.isObject = isObject;
 
 exports.isRegExp = function(value) {
     return isObject(value) && Object.prototype.toString.call(value) === '[object RegExp]';
@@ -28,11 +27,7 @@ function extend() {
             keys = Object.keys(obj);
             j = keys.length;
             while (j--) {
-                if (isObject(obj[keys[j]])) {
-                    target[keys[j]] = extend(target[keys[j]], obj[keys[j]]);
-                } else {
-                   target[keys[j]] = obj[keys[j]]; 
-                } 
+                target[keys[j]] = isObject(obj[keys[j]]) ? extend(target[keys[j]], obj[keys[j]]) : obj[keys[j]];
             }
         }
     }
