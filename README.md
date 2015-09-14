@@ -13,18 +13,18 @@
 作为`gulp`插件使用：
 
 	$ npm install --save-dev gulp-devserver
-	
+
 单独使用：
 
 	$ npm install gulp-devserver -g
-	
+
 # Usage
 
 作为`gulp`插件使用：
 
 	var gulp = require('gulp');
 	var server = require('gulp-devserver');
-	
+
 	gulp.task('devserver', function () {
 	  gulp.src('./app')
 	    .pipe(server({
@@ -38,24 +38,36 @@
 	      }
 	     }));
 	});
-	
+
 单独使用：
 
-	$ devs help
-	
+	$ devs --help
+
 		Usage: devs [options]
-		
+
 		Options:
-		
+
 			-h, --help        output usage information
     		-V, --version     output the version number
-    		-c, --config      The option config json file path
+    		-c, --config      The option config.js file path
     		-d, --dir         The option static files dir
    			-n, --no-browser  do not open the localhost server in a browser
     		-l, --log [type]  log level (default: info)
     		-p, --port <n>    the port to run on
-    		-h, --host        The host to run
     		
+下面是一个`config.js`配置文件模板：
+
+	module.exports = {
+		livereload: {
+			clientConsole: true
+		},
+		proxy: {
+        	enable: true,
+        	host: 'http://w3cboy.com',
+        	urls: '/api/list'
+    	}
+	};
+
 # Options
 
 **host**
@@ -120,12 +132,12 @@ livereload所需文件服务器端口。`default`: `35729`
 		host: 'http://w3cboy.com',
 		urls: '/api/list'
 	}
-	
+
 	// client
 	$.getJSON('/api/list', function (data) {
 		console.log(data);
 	});
-	
+
 那么收到如上ajax请求服务器会去`http://w3cboy.com/api/list`请求数据返回，于是头痛的跨域问题没有了。
 
 **proxy.mock**
@@ -143,7 +155,7 @@ livereload所需文件服务器端口。`default`: `35729`
 			}
 		}
 	}
-	
+
 关于mock数据模板的详细用法请参考：[Mock.js](http://mockjs.com/#mock)
 
 `proxy.mock`的优先级比`proxy.urls`要高，因此匹配到mock了就会去走mock，匹配不到的依然走`proxy.urls`。
@@ -158,7 +170,7 @@ livereload所需文件服务器端口。`default`: `35729`
 
 
 
-	
+
 
 
 

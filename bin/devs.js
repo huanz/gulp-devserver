@@ -12,7 +12,6 @@ program
     .option('-n, --no-browser', 'Do not open in a Browser')
     .option('-l, --log [type]', 'Log level (default: info)', 'info')
     .option('-p, --port <n>', 'The port to run on', parseInt)
-    .option('-h, --host', 'The host to run')
     .parse(process.argv);
 
 var opts = {};
