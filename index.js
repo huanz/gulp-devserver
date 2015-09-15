@@ -57,9 +57,10 @@ var defaults = {
     livereload: {
         enable: true,
         port: 35729,
-        filter: function(filename, cb) {
-            cb(!(/node_modules/.test(filename)));
+        filter: function(filename) {
+            return !/node_modules/.test(filename);
         },
+        delay: 1000,
         clientConsole: false,
     },
     listdir: true,
@@ -86,6 +87,7 @@ module.exports = function(options) {
     var app = connect();
     app.use(function(req, res, next) {
         res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
         next();
     });
 
@@ -113,8 +115,13 @@ module.exports = function(options) {
             snippet += '<script src="' + ioServerOrigin + '/__ds_console.js"></script>';
             injectRules.push({
                 snippet: ' crossorigin="anonymous"',
-                match: /<script\s+\S*src="\S+"/gi,
+                match: /<script[^<]*\s+src=["'][^'"\s]+["']/gi,
                 fn: function (m, s) {
+                    m.replace(/\ssrc=["']([^'"\s]+)["']/i, function ($1, url) {
+                        if (url.test(/^(https?)?:\/\//) && url.indexOf(config.host) === -1) {
+                            s = '';
+                        }
+                    });
                     return m + s;
                 }
             });
@@ -190,16 +197,14 @@ module.exports = function(options) {
         // 监听文件变化，reload
         if (config.livereload.enable) {
             watch(config.path, function(filename) {
-                config.livereload.filter(filename, function(shouldReload) {
-                    if (shouldReload) {
-                        utils.log('changed: ' + utils.colors.yellow(path.relative(config.path, filename)));
-                        config.livereload.io.emit('file:change', {
-                            path: filename,
-                            name: path.basename(filename),
-                            ext: path.extname(filename).replace(/^\./, ''),
-                        });
-                    }
-                });
+                if (config.livereload.filter(filename)) {
+                    utils.log('change: ' + utils.colors.yellow(path.relative(config.path, filename)));
+                    config.livereload.io.emit('file:change', {
+                        path: filename,
+                        name: path.basename(filename),
+                        ext: path.extname(filename).replace(/^\./, ''),
+                    });
+                }
             });
         }
 

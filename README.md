@@ -1,5 +1,7 @@
 # gulp-devserver [![stars](https://img.shields.io/github/stars/huanz/gulp-devserver.svg?style=flat-square)](https://github.com/huanz/gulp-devserver/stargazers) [![npm package](https://img.shields.io/npm/v/gulp-devserver.svg?style=flat-square)](https://www.npmjs.com/package/gulp-devserver)
 
+[![npm](https://nodei.co/npm/gulp-devserver.png)](https://www.npmjs.com/package/gulp-devserver)
+
 一个本地调试`gulp`插件，具备如下功能：
 
 * 随时随地启动一个静态文件服务器
