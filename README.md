@@ -56,7 +56,7 @@
    			-n, --no-browser  do not open the localhost server in a browser
     		-l, --log [type]  log level (default: info)
     		-p, --port <n>    the port to run on
-    		
+
 下面是一个`config.js`配置文件模板：
 
 	module.exports = {
@@ -106,7 +106,12 @@ livereload所需文件服务器端口。`default`: `35729`
 
 **livereload.filter**
 
-过滤不需要重新加载的文件。
+过滤不需要重新加载的文件。`default`:
+
+    // 过滤掉node_modules目录下文件
+    filter: function(filename) {
+        return !/node_modules/.test(filename);
+    }
 
 **livereload.clientConsole**
 

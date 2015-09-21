@@ -61,7 +61,7 @@ var defaults = {
             return !/node_modules/.test(filename);
         },
         delay: 1000,
-        clientConsole: false,
+        clientConsole: false
     },
     listdir: true,
     proxy: {
@@ -195,15 +195,33 @@ module.exports = function(options) {
         }
 
         // 监听文件变化，reload
+        var changedQueue = {};
+        var boardcastChange;
         if (config.livereload.enable) {
+            boardcastChange = function (filename) {
+                utils.log('change: ' + utils.colors.yellow(path.relative(config.path, filename)));
+                config.livereload.io.emit('file:change', {
+                    path: filename,
+                    name: path.basename(filename),
+                    ext: path.extname(filename).replace(/^\./, ''),
+                });
+                changedQueue[filename].stamp = Date.now();
+            };
             watch(config.path, function(filename) {
                 if (config.livereload.filter(filename)) {
-                    utils.log('change: ' + utils.colors.yellow(path.relative(config.path, filename)));
-                    config.livereload.io.emit('file:change', {
-                        path: filename,
-                        name: path.basename(filename),
-                        ext: path.extname(filename).replace(/^\./, ''),
-                    });
+                    if (!changedQueue[filename]) {
+                        changedQueue[filename] = {};
+                        boardcastChange(filename);
+                    } else if (Date.now() - changedQueue[filename].stamp > config.livereload.delay) {
+                        boardcastChange(filename);
+                    } else {
+                        if (!changedQueue[filename].timer) {
+                            setTimeout(function() {
+                                boardcastChange(filename);
+                            }, Date.now() - changedQueue[filename].stamp);
+                            changedQueue[filename].timer = 1;
+                        }
+                    }
                 }
             });
         }
