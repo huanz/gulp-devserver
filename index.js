@@ -118,7 +118,7 @@ module.exports = function(options) {
                 match: /<script[^<]*\s+src=["'][^'"\s]+["']/gi,
                 fn: function (m, s) {
                     m.replace(/\ssrc=["']([^'"\s]+)["']/i, function ($1, url) {
-                        if (url.test(/^(https?)?:\/\//) && url.indexOf(config.host) === -1) {
+                        if (/^(https?)?:\/\//.test(url) && url.indexOf(config.host) === -1) {
                             s = '';
                         }
                     });
