@@ -168,7 +168,7 @@ module.exports = function(options) {
         });
     }
     // gulp入口
-    return through.obj(function(file, enc, callback) {
+    var stream = through.obj(function(file, enc, callback) {
         config.path = file.path;
         if (config.debug) {
             app.use(function(req, res, next) {
@@ -229,14 +229,25 @@ module.exports = function(options) {
         this.push(file);
 
         callback();
-    }).on('data', function() {
-        // start the web server
+    });
+
+    var startServer = function () {
         webserver.listen(config.port, config.host, openInBrowser);
         utils.log('Webserver started at', utils.colors.cyan('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port));
-    }).on('kill', function() {
+    };
+
+    var stopServer = function () {
         webserver.close();
         if (config.livereload.enable) {
             config.livereload.ioServer.close();
         }
-    });
+        process.exit(-1);
+    };
+
+    stream.on('data', startServer);
+    stream.on('kill', stopServer);
+    // 意外错误关闭服务器
+    process.on('uncaughtException', stopServer);
+
+    return stream;
 };
