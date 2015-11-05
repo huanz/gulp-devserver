@@ -54,7 +54,7 @@
     		-c, --config      The option config.js file path
     		-d, --dir         The option static files dir
    			-n, --no-browser  do not open the localhost server in a browser
-    		-l, --log [type]  log level (default: info)
+    		-b, --debug       Is debug (default: false)
     		-p, --port <n>    the port to run on
 
 下面是一个`config.js`配置文件模板：
@@ -71,10 +71,6 @@
 	};
 
 # Options
-
-**host**
-
-静态服务器host，默认空会获取本地ip作为host。`default`: `''`
 
 **port**
 
@@ -110,7 +106,7 @@ livereload所需文件服务器端口。`default`: `35729`
 
     // 过滤掉node_modules目录下文件
     filter: function(filename) {
-        return !/node_modules/.test(filename);
+        return !/\/\.svn\/|\/\.git\/|\/node_modules\//.test(filename);
     }
 
 **livereload.clientConsole**

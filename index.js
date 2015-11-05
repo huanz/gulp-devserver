@@ -48,7 +48,6 @@ var getIPAddress = function() {
 
 var BROWSER_SCIPTS_DIR = path.join(__dirname, 'lib');
 var defaults = {
-    host: '',
     port: 3000,
     defaultFile: 'index.html',
     https: false,
@@ -58,7 +57,7 @@ var defaults = {
         enable: true,
         port: 35729,
         filter: function(filename) {
-            return !/node_modules/.test(filename);
+            return !/\/\.svn\/|\/\.git\/|\/node_modules\//.test(filename);
         },
         delay: 1000,
         clientConsole: false
@@ -74,7 +73,7 @@ var defaults = {
 
 module.exports = function(options) {
     var config = utils.extend({}, defaults, options);
-    config.host = config.host || getIPAddress();
+    config.host = getIPAddress();
     // 自动打开浏览器
     var openInBrowser = function() {
         if (!config.open) {
@@ -142,7 +141,7 @@ module.exports = function(options) {
         ioApp.use(serveStatic(BROWSER_SCIPTS_DIR, {
             index: false
         }));
-        var ioServer = config.livereload.ioServer = http.createServer(ioApp).listen(config.livereload.port, config.host);
+        var ioServer = config.livereload.ioServer = http.createServer(ioApp).listen(config.livereload.port);
         // 启动socket服务
         var io = config.livereload.io = socket(ioServer);
         io.on('connection', function(socket) {
@@ -203,7 +202,7 @@ module.exports = function(options) {
                 config.livereload.io.emit('file:change', {
                     path: filename,
                     name: path.basename(filename),
-                    ext: path.extname(filename).replace(/^\./, ''),
+                    ext: path.extname(filename).replace(/^\./, '')
                 });
                 changedQueue[filename].stamp = Date.now();
             };
@@ -232,7 +231,7 @@ module.exports = function(options) {
     });
 
     var startServer = function () {
-        webserver.listen(config.port, config.host, openInBrowser);
+        webserver.listen(config.port, openInBrowser);
         utils.log('Webserver started at', utils.colors.cyan('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port));
     };
 

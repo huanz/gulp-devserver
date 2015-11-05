@@ -21,7 +21,7 @@ program
     .option('-c, --config', 'The option config json file path')
     .option('-d, --dir', 'The option static files dir')
     .option('-n, --no-browser', 'Do not open in a Browser')
-    .option('-l, --log [type]', 'Log level (default: info)', 'info')
+    .option('-b, --debug', 'Is debug (default: false)', Boolean)
     .option('-p, --port <n>', 'The port to run on', parseInt)
     .parse(process.argv);
 
