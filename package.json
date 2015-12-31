@@ -1,7 +1,7 @@
 {
   "name": "gulp-devserver",
   "description": "Gulp plugin to run a local webserver with LiveReload and debug for ajax cross domain and data mock",
-  "version": "0.5.9",
+  "version": "0.6.0",
   "main": "index.js",
   "bin": {
     "devs": "./bin/devs"
@@ -39,7 +39,7 @@
     "commander": "^2.9.0",
     "connect": "^3.4.0",
     "connect-inject": "^0.4.0",
-    "mockjs": "^0.1.10",
+    "mock": "^0.1.1",
     "node-watch": "^0.3.4",
     "request": "^2.65.0",
     "serve-index": "^1.7.2",

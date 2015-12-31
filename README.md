@@ -54,7 +54,7 @@
     		-c, --config      The option config.js file path
     		-d, --dir         The option static files dir
    			-n, --no-browser  do not open the localhost server in a browser
-    		-b, --debug       Is debug (default: false)
+    		-b, --debug       open debug (default: false)
     		-p, --port <n>    the port to run on
 
 下面是一个`config.js`配置文件模板：
@@ -123,7 +123,7 @@ livereload所需文件服务器端口。`default`: `35729`
 
 **proxy.host**
 
-通过`proxy.urls`匹配到的`url`都会到这个`host`下面去请求。
+通过`proxy.urls`匹配（只匹配请求url里面的path部分）到的`url`都会到这个`host`下面去请求。
 
 **proxy.urls**
 
@@ -151,15 +151,20 @@ livereload所需文件服务器端口。`default`: `35729`
 		enable: true,
 		mock: {
 			'/api/list': {
-				'list|1-10': [{
+				'list|20': [{
         			'id|+1': 1,
-        			'email': '@EMAIL'
+                    'name': '@cname',
+        			'email': '@email',
+                    'title': '@ctitle',
+                    'url': '@url',
+                    'image': '@image(150x150)',
+                    'date': '@now("T")'
     			}]
 			}
 		}
 	}
 
-关于mock数据模板的详细用法请参考：[Mock.js](http://mockjs.com/#mock)
+关于mock数据模板的详细用法请参考：[Mock.js](http://mockjs.com/examples.html)
 
 `proxy.mock`的优先级比`proxy.urls`要高，因此匹配到mock了就会去走mock，匹配不到的依然走`proxy.urls`。
 
