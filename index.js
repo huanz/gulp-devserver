@@ -15,6 +15,7 @@ var inject = require('connect-inject');
 var serveIndex = require('serve-index');
 var serveStatic = require('serve-static');
 var through = require('through2');
+var _ = require('loadsh');
 
 var utils = require('./utils');
 var iProxy = require('./iproxy');
@@ -72,7 +73,8 @@ var defaults = {
 };
 
 module.exports = function(options) {
-    var config = utils.extend({}, defaults, options);
+    // var config = utils.extend({}, defaults, options);
+    var config = _.assign({}, defaults, options);
     config.host = getIPAddress();
     // 自动打开浏览器
     var openInBrowser = function() {
