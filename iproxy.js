@@ -7,10 +7,6 @@ var Mock = require('mockjs');
 var utils = require('./utils');
 
 function iProxy(opt) {
-    // 是否需要mock数据
-    var isMock = function(u) {
-        return opt.mock[url.parse(u).pathname];
-    };
     // 是否需要代理此接口
     var proxyUrls = utils.isArray(opt.urls) ? opt.urls : [opt.urls];
     var isProxy = function(u) {
@@ -19,14 +15,15 @@ function iProxy(opt) {
         });
     };
     return function(req, res, next) {
-        var m = isMock(req.url);
+        var parsed = url.parse(req.url);
+        var m = opt.mock[parsed.pathname];
         if (m) {
             res.end(Mock.mock(m));
-        } else if (isProxy(req.url) && opt.host) {
+        } else if (opt.host && isProxy(parsed.pathname)) {
             req.headers['Host'] = opt.host.replace(/^https?:\/\//, '');
             request({
                 method: req.method,
-                url: opt.host + req.url,
+                url: opt.host + parsed.path,
                 headers: req.headers
             }).pipe(res);
         } else {
