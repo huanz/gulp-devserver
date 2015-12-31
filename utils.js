@@ -1,16 +1,15 @@
 'use strict';
 
 var chalk = require('chalk');
-
-// 此处不包含function
-function isObject(value) {
-    var type = typeof value;
-    return !!value && type === 'object';
+var toString = Object.prototype.toString;
+var isType = function(type) {
+    return function (obj) {
+        return toString.call(obj) === '[object ' + type + ']';
+    };
 };
 
-exports.isRegExp = function(value) {
-    return isObject(value) && Object.prototype.toString.call(value) === '[object RegExp]';
-};
+var isObject = isType('Object');
+exports.isRegExp = isType('RegExp');
 
 exports.isArray = function(value) {
     return Array.isArray(value);
