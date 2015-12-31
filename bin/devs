@@ -18,20 +18,24 @@ var verstr = [
 
 program
     .version(verstr.join('\n'))
-    .option('-c, --config', 'The option config json file path')
-    .option('-d, --dir', 'The option static files dir')
+    .option('-c, --config [value]', 'The option config json file path')
+    .option('-d, --dir [value]', 'The option static files dir')
     .option('-n, --no-browser', 'Do not open in a Browser')
-    .option('-b, --debug', 'Is debug (default: false)', Boolean)
+    .option('-b, --debug', 'open debug (default: false)')
     .option('-p, --port <n>', 'The port to run on', parseInt)
     .parse(process.argv);
 
 var opts = {};
 
 if (program.config) {
-    opts = require(program.config);
+    try{
+        opts = require(program.config);
+    }catch(e){
+
+    }
 } else {
-    if (program.log) {
-        opts.log = program.log;
+    if (program.debug) {
+        opts.debug = true;
     }
     if (program.noBrowser) {
         opts.open = false;
@@ -41,4 +45,16 @@ if (program.config) {
     }
 }
 
-fs.src(program.dir || process.cwd()).pipe(server(opts));
+var src = process.cwd();
+if (program.dir) {
+    try{
+        var stats = fs.statSync(program.dir);
+        if (stats.isDirectory()) {
+            src = program.dir;
+        }
+    }catch(e){
+
+    }
+}
+
+fs.src(src).pipe(server(opts));
