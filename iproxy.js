@@ -21,11 +21,16 @@ function iProxy(opt) {
             res.end(Mock.mock(m));
         } else if (opt.host && isProxy(parsed.pathname)) {
             req.headers['Host'] = opt.host.replace(/^https?:\/\//, '');
-            request({
-                method: req.method,
-                url: opt.host + parsed.path,
-                headers: req.headers
-            }).pipe(res);
+            var requestBody = '';
+            req.on('data',function(chunk){requestBody+=chunk})
+                .on('end',function() {
+                    request({
+                        method: req.method,
+                        url: opt.host + parsed.path,
+                        headers: req.headers,
+                        body: requestBody
+                    }).pipe(res);
+                });
         } else {
             next();
         }
