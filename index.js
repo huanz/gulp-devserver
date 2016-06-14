@@ -11,6 +11,8 @@ var spawn = require('child_process').spawn;
 var socket = require('socket.io');
 var watch = require('node-watch');
 var connect = require('connect');
+var bodyParser = require('body-parser');
+var multipart = require('connect-multiparty');
 var inject = require('connect-inject');
 var serveIndex = require('serve-index');
 var serveStatic = require('serve-static');
@@ -84,6 +86,11 @@ module.exports = function(options) {
     };
 
     var app = connect();
+
+    app.use(bodyParser.urlencoded({extended: false}));
+    app.use(bodyParser.json());
+    app.use(multipart());
+
     app.use(function(req, res, next) {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');

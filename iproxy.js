@@ -17,15 +17,20 @@ function iProxy(opt) {
     return function(req, res, next) {
         var parsed = url.parse(req.url);
         var m = opt.mock[parsed.pathname];
+        var opts = null;
         if (m) {
             res.end(Mock.mock(m));
         } else if (opt.host && isProxy(parsed.pathname)) {
             req.headers['Host'] = opt.host.replace(/^https?:\/\//, '');
-            request({
+            opts = {
                 method: req.method,
                 url: opt.host + parsed.path,
                 headers: req.headers
-            }).pipe(res);
+            };
+            if (req.body && Object.keys(req.body).length) {
+                opts.form = req.body;
+            }
+            request(opts).pipe(res);
         } else {
             next();
         }

@@ -35,10 +35,12 @@
   "homepage": "https://github.com/huanz/gulp-devserver",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.15.1",
     "chalk": "^1.1.1",
     "commander": "^2.9.0",
     "connect": "^3.4.0",
     "connect-inject": "^0.4.0",
+    "connect-multiparty": "^2.0.0",
     "mockjs": "^1.0.0-beta1",
     "node-watch": "^0.3.4",
     "request": "^2.65.0",
