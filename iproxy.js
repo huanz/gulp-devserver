@@ -27,20 +27,25 @@ function iProxy(opt) {
                 url: opt.host + parsed.path,
                 headers: req.headers
             };
-            if (req.body && Object.keys(req.body).length) {
-                opts.form = req.body;
-            }
-            var requestBody = '';
-            req.on('data', function(chunk) {
-                requestBody += chunk;
-            }).on('end', function() {
-                opts.body = requestBody;
+
+            if (req.headers['content-type'] && req.headers['content-type'].indexOf('multipart/form-data') === -1) {
+                if (req.body && Object.keys(req.body).length) {
+                    opts.form = req.body;
+                }
                 request(opts).pipe(res);
-            });
+            } else {
+                var requestBody = '';
+                req.on('data', function(chunk) {
+                    requestBody += chunk;
+                }).on('end', function() {
+                    opts.body = requestBody;
+                    request(opts).pipe(res);
+                });
+            }
         } else {
             next();
         }
     };
-};
+}
 
 module.exports = iProxy;
