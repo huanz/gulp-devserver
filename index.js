@@ -213,7 +213,7 @@ module.exports = function(options) {
                 });
                 changedQueue[filename].stamp = Date.now();
             };
-            watch(config.path, function(filename) {
+            watch(config.path, { recursive: true }, function(evt, filename) {
                 if (config.livereload.filter(filename)) {
                     if (!changedQueue[filename]) {
                         changedQueue[filename] = {};
