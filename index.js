@@ -50,6 +50,7 @@ var getIPAddress = function() {
 
 var BROWSER_SCIPTS_DIR = path.join(__dirname, 'lib');
 var defaults = {
+    host: '127.0.0.1',
     port: 3000,
     defaultFile: 'index.html',
     https: false,
@@ -75,7 +76,7 @@ var defaults = {
 
 module.exports = function(options) {
     var config = utils.extend({}, defaults, options);
-    config.host = getIPAddress();
+    config.host = config.host || getIPAddress();
     // 自动打开浏览器
     var openInBrowser = function() {
         if (!config.open) {
@@ -108,7 +109,7 @@ module.exports = function(options) {
     } else {
         webserver = http.createServer(app);
     }
-
+    utils.log('server created');
     // livereload服务相关
     if (config.livereload.enable) {
         // 插入livereload相关script至body
@@ -242,7 +243,12 @@ module.exports = function(options) {
         utils.log('Webserver started at', utils.colors.cyan('http' + (config.https ? 's' : '') + '://' + config.host + ':' + config.port));
     };
 
-    var stopServer = function () {
+    var stopServer = function (err) {
+        utils.log('uncaughtException!!');
+        //打印出错误
+        utils.log(err);
+        //打印出错误的调用栈方便调试
+        utils.log(err.stack);
         webserver.close();
         if (config.livereload.enable) {
             config.livereload.ioServer.close();

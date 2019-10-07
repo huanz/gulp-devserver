@@ -1,7 +1,7 @@
 {
-  "name": "gulp-devserver",
+  "name": "@lt/gulp-devserver",
   "description": "Gulp plugin to run a local webserver with LiveReload and debug for ajax cross domain and data mock",
-  "version": "0.6.3",
+  "version": "0.6.5",
   "main": "index.js",
   "bin": {
     "devs": "./bin/devs"
@@ -11,10 +11,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/huanz/gulp-devserver.git"
+    "url": "https://github.com/libery/gulp-devserver.git"
   },
   "bugs": {
-    "url": "https://github.com/huanz/gulp-devserver/issues"
+    "url": "https://github.com/libery/gulp-devserver/issues"
   },
   "keywords": [
     "gulpplugin",
@@ -27,12 +27,12 @@
     "mock"
   ],
   "author": {
-    "name": "bukas (https://github.com/huanz)"
+    "name": "libery (https://github.com/libery)"
   },
   "engines": {
     "node": ">= 0.10.0"
   },
-  "homepage": "https://github.com/huanz/gulp-devserver",
+  "homepage": "https://github.com/libery/gulp-devserver",
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.18.1",
@@ -49,5 +49,8 @@
     "socket.io": "^2.0.3",
     "through2": "^2.0.3",
     "vinyl-fs": "^2.4.4"
+  },
+  "publishConfig": {
+    "registry": "http://repo.linktopo.com:8081/nexus/repository/npm-lt/"
   }
 }
