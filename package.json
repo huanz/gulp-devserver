@@ -1,7 +1,7 @@
 {
   "name": "gulp-devserver",
   "description": "Gulp plugin to run a local webserver with LiveReload and debug for ajax cross domain and data mock",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "main": "index.js",
   "bin": {
     "devs": "./bin/devs"
@@ -35,19 +35,19 @@
   "homepage": "https://github.com/huanz/gulp-devserver",
   "license": "MIT",
   "dependencies": {
-    "body-parser": "^1.18.1",
-    "chalk": "^2.1.0",
-    "commander": "^2.11.0",
-    "connect": "^3.6.3",
+    "body-parser": "^1.19.0",
+    "chalk": "^2.4.2",
+    "commander": "^3.0.2",
+    "connect": "^3.7.0",
     "connect-inject": "^0.4.0",
-    "connect-multiparty": "^2.0.0",
+    "connect-multiparty": "^2.2.0",
     "mockjs": "^1.0.1-beta3",
-    "node-watch": "^0.5.5",
-    "request": "^2.81.0",
-    "serve-index": "^1.9.0",
-    "serve-static": "^1.12.4",
-    "socket.io": "^2.0.3",
-    "through2": "^2.0.3",
-    "vinyl-fs": "^2.4.4"
+    "node-watch": "^0.6.3",
+    "request": "^2.88.0",
+    "serve-index": "^1.9.1",
+    "serve-static": "^1.14.1",
+    "socket.io": "^2.3.0",
+    "through2": "^3.0.1",
+    "vinyl-fs": "^3.0.3"
   }
 }

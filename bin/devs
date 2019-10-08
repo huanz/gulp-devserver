@@ -6,55 +6,51 @@ var program = require('commander');
 var server = require('../index');
 
 var verstr = [
-'',
-' v' + require('../package.json').version,
-'       __',
-'  ____/ /__ _   __________  ______   _____  _____',
-' / __  / _ \\ | / / ___/ _ \\/ ___/ | / / _ \\/ ___/',
-'/ /_/ /  __/ |/ (__  )  __/ /   | |/ /  __/ /',
-'\\__,_/\\___/|___/____/\\___/_/    |___/\\___/_/',
-''
+  '',
+  ' v' + require('../package.json').version,
+  '       __',
+  '  ____/ /__ _   __________  ______   _____  _____',
+  ' / __  / _ \\ | / / ___/ _ \\/ ___/ | / / _ \\/ ___/',
+  '/ /_/ /  __/ |/ (__  )  __/ /   | |/ /  __/ /',
+  '\\__,_/\\___/|___/____/\\___/_/    |___/\\___/_/',
+  ''
 ];
 
 program
-    .version(verstr.join('\n'))
-    .option('-c, --config [value]', 'The option config json file path')
-    .option('-d, --dir [value]', 'The option static files dir')
-    .option('-n, --no-browser', 'Do not open in a Browser')
-    .option('-b, --debug', 'open debug (default: false)')
-    .option('-p, --port <n>', 'The port to run on', parseInt)
-    .parse(process.argv);
+  .version(verstr.join('\n'))
+  .option('-c, --config [value]', 'The option config json file path')
+  .option('-d, --dir [value]', 'The option static files dir')
+  .option('-n, --no-browser', 'Do not open in a Browser')
+  .option('-b, --debug', 'open debug (default: false)')
+  .option('-p, --port <n>', 'The port to run on', parseInt)
+  .parse(process.argv);
 
 var opts = {};
 
 if (program.config) {
-    try{
-        opts = require(program.config);
-    }catch(e){
-
-    }
+  try {
+    opts = require(program.config);
+  } catch (e) {}
 } else {
-    if (program.debug) {
-        opts.debug = true;
-    }
-    if (program.noBrowser) {
-        opts.open = false;
-    }
-    if (program.port) {
-        opts.port = program.port;
-    }
+  if (program.debug) {
+    opts.debug = true;
+  }
+  if (program.noBrowser) {
+    opts.open = false;
+  }
+  if (program.port) {
+    opts.port = program.port;
+  }
 }
 
 var src = process.cwd();
 if (program.dir) {
-    try{
-        var stats = fs.statSync(program.dir);
-        if (stats.isDirectory()) {
-            src = program.dir;
-        }
-    }catch(e){
-
+  try {
+    var stats = fs.statSync(program.dir);
+    if (stats.isDirectory()) {
+      src = program.dir;
     }
+  } catch (e) {}
 }
 
 fs.src(src).pipe(server(opts));
